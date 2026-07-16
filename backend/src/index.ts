@@ -3,8 +3,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { config } from './config';
-import { testConnection } from './db/client';
+import { testConnection, runRawSql, DB_FILE } from './db/client';
 import { logger } from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
@@ -22,7 +24,9 @@ const app = express();
 // ------------------------------------------------------------------
 app.use(helmet());
 app.use(cors({
-  origin: config.isProduction ? process.env.ALLOWED_ORIGINS?.split(',') : '*',
+  origin: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
+    : '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -62,6 +66,17 @@ async function start(): Promise<void> {
   const dbOk = await testConnection();
   if (!dbOk) {
     logger.error('Cannot connect to database. Exiting.');
+    process.exit(1);
+  }
+
+  // Auto-migrate on every boot — CREATE TABLE IF NOT EXISTS makes this safe to repeat
+  try {
+    const schemaPath = join(__dirname, 'db', 'schema.sql');
+    const sql = readFileSync(schemaPath, 'utf-8');
+    runRawSql(sql);
+    logger.info('Database schema applied', { db: DB_FILE });
+  } catch (err) {
+    logger.error('Migration failed', { error: (err as Error).message });
     process.exit(1);
   }
 

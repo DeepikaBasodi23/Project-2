@@ -1,6 +1,9 @@
 {
   "name": "loan-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
@@ -8,7 +11,9 @@
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
     "migrate": "ts-node src/db/migrate.ts",
-    "seed": "ts-node src/db/seed.ts"
+    "migrate:prod": "node dist/db/migrate.js",
+    "seed": "ts-node src/db/seed.ts",
+    "seed:prod": "node dist/db/seed.js"
   },
   "dependencies": {
     "cors": "2.8.5",
