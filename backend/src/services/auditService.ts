@@ -1,4 +1,4 @@
-import { query, queryOne } from '../db/client';
+import { query, queryOne, execute } from '../db/client';
 import { normalizeRow, normalizeRows } from '../db/normalize';
 import { AuditLog, FullAuditRecord, PaginatedResult } from '../types';
 import { logger } from '../utils/logger';
@@ -13,32 +13,32 @@ export class AuditService {
     ipAddress?: string
   ): Promise<AuditLog> {
     const id = uuidv4();
-    await query(
+    await execute(
       `INSERT INTO audit_logs (id, application_id, event_type, actor, details, ip_address)
-       VALUES ($1,$2,$3,$4,$5,$6)`,
+       VALUES (?,?,?,?,?,?)`,
       [id, applicationId, eventType, actor, JSON.stringify(details), ipAddress || null]
     );
     logger.info('Audit event logged', { applicationId, eventType, actor });
-    const row = await queryOne('SELECT * FROM audit_logs WHERE id = $1', [id]);
+    const row = await queryOne('SELECT * FROM audit_logs WHERE id = ?', [id]);
     return normalizeRow<AuditLog>(row as Record<string, unknown>);
   }
 
   async getFullAuditRecord(applicationId: string): Promise<FullAuditRecord | null> {
-    const appRow = await queryOne('SELECT * FROM applications WHERE id = $1', [applicationId]);
+    const appRow = await queryOne('SELECT * FROM applications WHERE id = ?', [applicationId]);
     if (!appRow) return null;
     const application = normalizeRow(appRow as Record<string, unknown>);
 
     const [
       docRows, valRows, scoreRows, recRows, fairRows, decisionRows, logRows, pvRows,
     ] = await Promise.all([
-      query('SELECT * FROM documents WHERE application_id = $1 ORDER BY uploaded_at', [applicationId]),
-      query('SELECT * FROM document_validation_results WHERE application_id = $1 ORDER BY created_at DESC LIMIT 1', [applicationId]),
-      query('SELECT * FROM policy_scores WHERE application_id = $1 ORDER BY scored_at DESC LIMIT 1', [applicationId]),
-      query('SELECT * FROM recommendations WHERE application_id = $1 ORDER BY created_at DESC LIMIT 1', [applicationId]),
-      query('SELECT * FROM fairness_checks WHERE application_id = $1 ORDER BY checked_at DESC LIMIT 1', [applicationId]),
-      query('SELECT * FROM human_decisions WHERE application_id = $1 ORDER BY decided_at', [applicationId]),
-      query('SELECT * FROM audit_logs WHERE application_id = $1 ORDER BY created_at', [applicationId]),
-      query('SELECT * FROM policy_versions WHERE id = $1', [(application as Record<string, unknown>).policy_version_id]),
+      query('SELECT * FROM documents WHERE application_id = ? ORDER BY uploaded_at', [applicationId]),
+      query('SELECT * FROM document_validation_results WHERE application_id = ? ORDER BY created_at DESC LIMIT 1', [applicationId]),
+      query('SELECT * FROM policy_scores WHERE application_id = ? ORDER BY scored_at DESC LIMIT 1', [applicationId]),
+      query('SELECT * FROM recommendations WHERE application_id = ? ORDER BY created_at DESC LIMIT 1', [applicationId]),
+      query('SELECT * FROM fairness_checks WHERE application_id = ? ORDER BY checked_at DESC LIMIT 1', [applicationId]),
+      query('SELECT * FROM human_decisions WHERE application_id = ? ORDER BY decided_at', [applicationId]),
+      query('SELECT * FROM audit_logs WHERE application_id = ? ORDER BY created_at', [applicationId]),
+      query('SELECT * FROM policy_versions WHERE id = ?', [(application as Record<string, unknown>).policy_version_id]),
     ]);
 
     return {

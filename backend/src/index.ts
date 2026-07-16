@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { config } from './config';
 import { testConnection } from './db/client';
-import { runMigration } from './db/migrate';
+import { runMigration, ensureDefaultPolicy } from './db/migrate';
 import { logger } from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
@@ -70,6 +70,9 @@ async function start(): Promise<void> {
 
   // Auto-migrate on every boot — all statements use IF NOT EXISTS, safe to repeat
   await runMigration();
+
+  // Seed default policy if none exists
+  await ensureDefaultPolicy();
 
   app.listen(config.port, () => {
     logger.info(`Loan Processing Agent backend running on port ${config.port}`, {

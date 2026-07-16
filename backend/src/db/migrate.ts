@@ -156,6 +156,43 @@ export async function runMigration(): Promise<void> {
   logger.info('Database schema applied', { db: DB_FILE });
 }
 
+const DEFAULT_POLICY_RULES = {
+  weights: { dti: 0.35, creditHistory: 0.30, incomeStability: 0.20, employmentStability: 0.15 },
+  thresholds: { approveMinScore: 70, referMinScore: 50, maxDTIRatio: 0.43, minCreditScore: 580, minAnnualIncome: 24000, minYearsEmployed: 0.5 },
+  hardRules: [
+    { id: 'HR-001', clause: 'Section 3.1', description: 'DTI ratio must not exceed 43%',      field: 'dtiRatio',     operator: 'lte', threshold: 0.43,  isHard: true },
+    { id: 'HR-002', clause: 'Section 3.2', description: 'Credit score must be at least 580',   field: 'creditScore',  operator: 'gte', threshold: 580,   isHard: true },
+    { id: 'HR-003', clause: 'Section 3.3', description: 'Annual income must be at least $24k', field: 'annualIncome', operator: 'gte', threshold: 24000, isHard: true },
+  ],
+  softRules: [
+    { id: 'SR-001', clause: 'Section 4.1', description: 'Employment duration ≥ 6 months preferred', field: 'yearsEmployed', operator: 'gte', threshold: 0.5,  isHard: false },
+    { id: 'SR-002', clause: 'Section 4.2', description: 'Preferred credit score above 650',          field: 'creditScore',  operator: 'gte', threshold: 650, isHard: false },
+  ],
+};
+
+/**
+ * Seeds the default policy version if none exists.
+ * Called from index.ts after runMigration().
+ */
+export async function ensureDefaultPolicy(): Promise<void> {
+  const { query, execute } = await import('./client');
+  const { v4: uuidv4 } = await import('uuid');
+
+  const existing = await query('SELECT id FROM policy_versions WHERE is_active = 1 LIMIT 1');
+  if (existing.length > 0) {
+    logger.info('Active policy already exists — skipping seed');
+    return;
+  }
+
+  const policyId = uuidv4();
+  await execute(
+    `INSERT INTO policy_versions (id, version, description, rules, is_active)
+     VALUES (?, ?, ?, ?, 1)`,
+    [policyId, 'v1.0.0', 'Initial retail lending policy', JSON.stringify(DEFAULT_POLICY_RULES)]
+  );
+  logger.info('Default policy seeded', { policyId });
+}
+
 // Allow running directly: ts-node src/db/migrate.ts
 if (require.main === module) {
   runMigration()
