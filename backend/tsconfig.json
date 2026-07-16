@@ -5,11 +5,17 @@
     "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src",
+
     "strict": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
+
+    "types": ["node", "express"],
+
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
