@@ -330,8 +330,8 @@ export default function UnderwriterDashboard() {
             )}
 
             {/* ── Loan details ── */}
-            <div style={{ ...card, background: 'linear-gradient(135deg,#ecfeff,#e0f2fe)', border: '1px solid #a5f3fc' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0891b2', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ ...card, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#475569', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 💳 Loan Details
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px', fontSize: '13px' }}>
@@ -346,8 +346,8 @@ export default function UnderwriterDashboard() {
                   ['Employer', record.application.employer_name || 'N/A'],
                   ['Years Employed', record.application.years_employed || 'N/A'],
                 ].map(([k, v]) => (
-                  <div key={String(k)} style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '8px', padding: '10px 12px', border: '1px solid #cffafe' }}>
-                    <div style={{ color: '#0891b2', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{k}</div>
+                  <div key={String(k)} style={{ background: '#f8fafc', borderRadius: '8px', padding: '10px 12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ color: '#94a3b8', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{k}</div>
                     <div style={{ fontWeight: 700, color: '#0f172a' }}>{String(v)}</div>
                   </div>
                 ))}
@@ -355,8 +355,8 @@ export default function UnderwriterDashboard() {
             </div>
 
             {/* ── Documents ── */}
-            <div style={{ ...card, background: 'linear-gradient(135deg,#eff6ff,#dbeafe)', border: '1px solid #93c5fd' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1d4ed8', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ ...card, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 📁 Documents ({record.documents.length})
               </h3>
               {record.documents.length === 0 ? (
@@ -409,8 +409,8 @@ export default function UnderwriterDashboard() {
 
             {/* ── Scores ── */}
             {record.policyScore && (
-              <div style={{ ...card, background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)', border: '1px solid #c4b5fd' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#7c3aed', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ ...card, background: '#fff', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#475569', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   📊 Policy Scores
                 </h3>
                 <ScoreBar score={record.policyScore.overall_score} label="Overall Weighted Score" />
@@ -513,27 +513,27 @@ export default function UnderwriterDashboard() {
 
             {/* ── Decision panel ── */}
             {record.application.status === 'AWAITING_DECISION' && (
-              <div style={{ ...card, border: '2px solid #6366f1', background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)' }}>
+              <div style={{ ...card, border: '2px solid #6366f1', background: '#fff' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#4338ca', marginBottom: '18px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   ✍ Underwriter Decision
                 </h3>
 
                 {/* Underwriter info */}
-                <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid #c7d2fe', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6366f1', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter ID</label>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748b', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter ID</label>
                     <input
                       value={underwriterId}
                       onChange={(e) => setUnderwriterId(e.target.value)}
-                      style={{ ...inputStyle, background: '#fff', border: '1.5px solid #a5b4fc' }}
+                      style={{ ...inputStyle, background: '#fff' }}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6366f1', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter Name</label>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748b', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter Name</label>
                     <input
                       value={underwriterName}
                       onChange={(e) => setUnderwriterName(e.target.value)}
-                      style={{ ...inputStyle, background: '#fff', border: '1.5px solid #a5b4fc' }}
+                      style={{ ...inputStyle, background: '#fff' }}
                     />
                   </div>
                 </div>

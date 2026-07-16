@@ -58,15 +58,15 @@ const filterInput: React.CSSProperties = {
 
 const thStyle: React.CSSProperties = {
   padding: '11px 14px',
-  color: '#7c3aed',
+  color: '#475569',
   fontWeight: 700,
   fontSize: '11px',
   textTransform: 'uppercase',
   letterSpacing: '0.6px',
   textAlign: 'left',
   whiteSpace: 'nowrap',
-  background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)',
-  borderBottom: '2px solid #c4b5fd',
+  background: '#f8fafc',
+  borderBottom: '2px solid #e2e8f0',
 };
 
 const tdStyle: React.CSSProperties = {
@@ -151,16 +151,16 @@ export default function AuditHistory() {
       </div>
 
       {/* ── Filters ── */}
-      <div style={{ ...card, background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)', border: '1px solid #c4b5fd', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'flex-end' }}>
+      <div style={{ ...card, background: '#fff', border: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'flex-end' }}>
         {/* Search */}
         <div style={{ flex: '1 1 200px' }}>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Search</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Search</div>
           <input style={{ ...filterInput, width: '100%' }} placeholder="Name, email or ID..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
         </div>
 
         {/* Status */}
         <div>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Status</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Status</div>
           <select style={filterInput} value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}>
             <option value="">All Statuses</option>
             {['SUBMITTED','PROCESSING','AWAITING_DECISION','DOCUMENTS_PENDING','APPROVED','DECLINED'].map((s) => (
@@ -171,7 +171,7 @@ export default function AuditHistory() {
 
         {/* AI Rec */}
         <div>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>AI Rec.</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>AI Rec.</div>
           <select style={filterInput} value={recFilter} onChange={(e) => { setRecFilter(e.target.value); setPage(1); }}>
             <option value="">All</option>
             <option value="APPROVE">APPROVE</option>
@@ -182,7 +182,7 @@ export default function AuditHistory() {
 
         {/* Human decision */}
         <div>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Human Decision</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Human Decision</div>
           <select style={filterInput} value={decisionFilter} onChange={(e) => { setDecisionFilter(e.target.value); setPage(1); }}>
             <option value="">All</option>
             <option value="APPROVED">APPROVED</option>
@@ -193,11 +193,11 @@ export default function AuditHistory() {
 
         {/* Date range */}
         <div>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>From</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>From</div>
           <input style={filterInput} type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} />
         </div>
         <div>
-          <div style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>To</div>
+          <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 700, marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>To</div>
           <input style={filterInput} type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} />
         </div>
 
@@ -282,8 +282,8 @@ export default function AuditHistory() {
                     {/* Expanded detail row */}
                     {isExpanded && (
                       <tr>
-                        <td colSpan={9} style={{ padding: '0', background: 'linear-gradient(135deg,#faf5ff,#f5f3ff)' }}>
-                          <div style={{ padding: '16px 20px', borderTop: '2px solid #a78bfa', borderBottom: '1px solid #e2e8f0' }}>
+                        <td colSpan={9} style={{ padding: '0', background: '#f8fafc' }}>
+                          <div style={{ padding: '16px 20px', borderTop: '2px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
                             {loadingRecord ? (
                               <div style={{ padding: '20px', color: 'var(--gray-400)', textAlign: 'center', fontSize: '13px' }}>
                                 ⏳ Loading audit record...
@@ -343,8 +343,8 @@ export default function AuditHistory() {
                                           {new Date(log.created_at).toLocaleTimeString()}
                                         </span>
                                         <span style={{
-                                          background: 'linear-gradient(135deg,#ede9fe,#ddd6fe)',
-                                          color: '#4c1d95',
+                                          background: '#f1f5f9',
+                                          color: '#475569',
                                           padding: '2px 8px', borderRadius: '20px',
                                           fontWeight: 700, fontSize: '10px',
                                           whiteSpace: 'nowrap',

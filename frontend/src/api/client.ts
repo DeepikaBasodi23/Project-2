@@ -14,11 +14,20 @@ const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      'An unexpected error occurred';
+    let message = 'An unexpected error occurred';
+
+    if (error.response) {
+      // Server responded with an error status
+      const status = error.response.status;
+      const data   = error.response.data;
+      message = data?.message || data?.error || `Server error (${status})`;
+    } else if (error.request) {
+      // Request was made but no response received (CORS, server down, timeout)
+      message = 'Cannot reach the server. Please check your connection or try again later.';
+    } else {
+      message = error.message || message;
+    }
+
     return Promise.reject(new Error(message));
   }
 );
