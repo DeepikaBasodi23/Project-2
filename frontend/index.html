@@ -4,10 +4,123 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Loan Processing Agent</title>
+    <title>LoanAgent — AI-Assisted Credit Processing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
     <style>
-      *, *::before, *::after { box-sizing: border-box; }
-      body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; }
+      :root {
+        /* Brand palette */
+        --primary:        #6366f1;
+        --primary-dark:   #4f46e5;
+        --primary-light:  #818cf8;
+        --primary-bg:     #eef2ff;
+
+        --accent:         #f59e0b;
+        --accent-dark:    #d97706;
+        --accent-bg:      #fffbeb;
+
+        --success:        #10b981;
+        --success-dark:   #059669;
+        --success-bg:     #ecfdf5;
+
+        --danger:         #ef4444;
+        --danger-dark:    #dc2626;
+        --danger-bg:      #fef2f2;
+
+        --warn:           #f59e0b;
+        --warn-bg:        #fffbeb;
+
+        --info:           #3b82f6;
+        --info-bg:        #eff6ff;
+
+        /* Neutrals */
+        --gray-50:  #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-400: #94a3b8;
+        --gray-500: #64748b;
+        --gray-600: #475569;
+        --gray-700: #334155;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+
+        /* Surface */
+        --surface:        #ffffff;
+        --surface-raised: #ffffff;
+        --bg:             #f1f5f9;
+
+        /* Typography */
+        --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+
+        /* Shadows */
+        --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow:     0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-md:  0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg:  0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-xl:  0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+        /* Radius */
+        --radius-sm:  6px;
+        --radius:     10px;
+        --radius-lg:  16px;
+        --radius-xl:  24px;
+        --radius-full: 9999px;
+
+        /* Transitions */
+        --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--gray-800);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: var(--gray-100); }
+      ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+      /* Focus ring */
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      input, select, textarea, button {
+        font-family: inherit;
+      }
+
+      /* Utility animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-12px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.5; }
+      }
+      .fade-in  { animation: fadeIn  0.25s ease both; }
+      .slide-in { animation: slideIn 0.2s  ease both; }
     </style>
   </head>
   <body>

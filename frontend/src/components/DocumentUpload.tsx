@@ -27,22 +27,65 @@ export default function DocumentUpload({
   };
 
   const isUploaded = uploadedCount > 0;
+  const hasSelected = selectedFiles.length > 0;
+
+  const borderColor = dragging
+    ? '#6366f1'
+    : isUploaded || hasSelected
+    ? '#10b981'
+    : '#cbd5e1';
+
+  const bgColor = dragging
+    ? 'rgba(99,102,241,0.05)'
+    : isUploaded || hasSelected
+    ? 'rgba(16,185,129,0.04)'
+    : '#fafafa';
 
   return (
     <div style={{ marginBottom: '16px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '6px', gap: '8px' }}>
-        <label style={{ fontSize: '14px', fontWeight: 500 }}>
+      {/* Label */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '8px',
+      }}>
+        <label style={{
+          fontSize: '13px',
+          fontWeight: 600,
+          color: 'var(--gray-700)',
+        }}>
           {label}
-          {required && <span style={{ color: '#e74c3c', marginLeft: '2px' }}>*</span>}
+          {required && (
+            <span style={{ color: 'var(--danger)', marginLeft: '3px' }}>*</span>
+          )}
         </label>
-        {isUploaded && (
-          <span style={{ background: '#d4edda', color: '#155724', padding: '1px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: 600 }}>
-            ✓ Uploaded
+        {(isUploaded || hasSelected) && (
+          <span style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+            color: '#065f46',
+            padding: '2px 10px',
+            borderRadius: '20px',
+            fontSize: '11px',
+            fontWeight: 700,
+            border: '1px solid #6ee7b7',
+          }}>
+            <span style={{ fontSize: '9px' }}>●</span>
+            {hasSelected ? 'Selected' : 'Uploaded'}
           </span>
         )}
       </div>
+
+      {/* Drop zone */}
       <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={`Upload ${label}`}
         onClick={() => !disabled && inputRef.current?.click()}
+        onKeyDown={(e) => e.key === 'Enter' && !disabled && inputRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); if (!disabled) setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => {
@@ -51,29 +94,58 @@ export default function DocumentUpload({
           if (!disabled) handleFiles(e.dataTransfer.files);
         }}
         style={{
-          border: `2px dashed ${dragging ? '#3498db' : isUploaded ? '#27ae60' : '#ccc'}`,
-          borderRadius: '8px',
-          padding: '16px',
+          border: `2px dashed ${borderColor}`,
+          borderRadius: 'var(--radius)',
+          padding: '20px 16px',
           textAlign: 'center',
           cursor: disabled ? 'not-allowed' : 'pointer',
-          background: dragging ? '#ebf5fb' : isUploaded ? '#f0fdf4' : '#fafafa',
-          opacity: disabled ? 0.6 : 1,
-          transition: 'all 0.2s',
+          background: bgColor,
+          opacity: disabled ? 0.55 : 1,
+          transition: 'var(--transition)',
+          userSelect: 'none',
         }}
       >
-        <div style={{ fontSize: '24px', marginBottom: '4px' }}>
-          {isUploaded ? '📄' : '📁'}
+        {/* Icon */}
+        <div style={{
+          width: '44px',
+          height: '44px',
+          margin: '0 auto 10px',
+          borderRadius: '12px',
+          background: isUploaded || hasSelected
+            ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)'
+            : dragging
+            ? 'linear-gradient(135deg, #ede9fe, #ddd6fe)'
+            : 'var(--gray-100)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '22px',
+        }}>
+          {isUploaded || hasSelected ? '✅' : dragging ? '📥' : '📁'}
         </div>
-        <div style={{ fontSize: '13px', color: '#555' }}>
-          {selectedFiles.length > 0
+
+        <div style={{
+          fontSize: '13px',
+          fontWeight: 500,
+          color: isUploaded || hasSelected ? '#065f46' : 'var(--gray-600)',
+          marginBottom: '4px',
+        }}>
+          {hasSelected
             ? selectedFiles.map((f) => f.name).join(', ')
             : isUploaded
             ? `${uploadedCount} file(s) already uploaded`
-            : 'Drop files here or click to browse'}
+            : dragging
+            ? 'Drop files here!'
+            : 'Click to browse or drag & drop'}
         </div>
-        <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
-          PDF, JPEG, PNG, DOC up to 10MB
+
+        <div style={{
+          fontSize: '11px',
+          color: 'var(--gray-400)',
+        }}>
+          PDF, JPEG, PNG, DOC — max 10 MB
         </div>
+
         <input
           ref={inputRef}
           type="file"
@@ -85,11 +157,6 @@ export default function DocumentUpload({
           aria-label={`Upload ${label}`}
         />
       </div>
-      {selectedFiles.length > 0 && (
-        <div style={{ marginTop: '4px', fontSize: '12px', color: '#27ae60' }}>
-          {selectedFiles.length} file(s) ready to upload: {selectedFiles.map((f) => f.name).join(', ')}
-        </div>
-      )}
     </div>
   );
 }

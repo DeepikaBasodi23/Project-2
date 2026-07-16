@@ -5,376 +5,391 @@ import StatusBadge from '../components/StatusBadge';
 
 type Step = 'personal' | 'employment' | 'loan' | 'documents' | 'submitted';
 
-const card: React.CSSProperties = {
-  background: '#fff',
-  borderRadius: '12px',
-  padding: '32px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-  maxWidth: '700px',
-  margin: '0 auto',
-};
-
-const input: React.CSSProperties = {
-  width: '100%',
-  padding: '10px 12px',
-  border: '1px solid #ddd',
-  borderRadius: '6px',
-  fontSize: '14px',
-  outline: 'none',
-};
-
-const label: React.CSSProperties = {
-  display: 'block',
-  fontSize: '13px',
-  fontWeight: 500,
-  marginBottom: '4px',
-  color: '#444',
-};
-
-const btn = (variant: 'primary' | 'secondary'): React.CSSProperties => ({
-  padding: '10px 24px',
-  borderRadius: '6px',
-  border: 'none',
-  fontWeight: 600,
-  fontSize: '14px',
-  cursor: 'pointer',
-  background: variant === 'primary' ? '#e94560' : '#f0f2f5',
-  color: variant === 'primary' ? '#fff' : '#333',
-});
-
-const STEPS: Step[] = ['personal', 'employment', 'loan', 'documents', 'submitted'];
-const STEP_LABELS = ['Personal Info', 'Employment & Income', 'Loan Details', 'Documents'];
+const STEPS: Step[]  = ['personal', 'employment', 'loan', 'documents', 'submitted'];
+const STEP_LABELS    = ['Personal Info', 'Employment & Income', 'Loan Details', 'Documents'];
+const STEP_ICONS     = ['👤', '💼', '💰', '📄'];
+const STEP_COLORS    = [
+  { from: '#06b6d4', to: '#0891b2' },   // cyan
+  { from: '#8b5cf6', to: '#7c3aed' },   // violet
+  { from: '#f59e0b', to: '#d97706' },   // amber
+  { from: '#10b981', to: '#059669' },   // emerald
+];
 
 const DOC_TYPES = [
-  { key: 'GOVERNMENT_ID', label: 'Government-Issued ID', required: true },
-  { key: 'INCOME_PROOF', label: 'Income Proof (W-2, pay stubs, tax return)', required: true },
-  { key: 'BANK_STATEMENT', label: 'Bank Statements (last 3 months)', required: true },
-  { key: 'CREDIT_REPORT', label: 'Credit Report', required: false },
+  { key: 'GOVERNMENT_ID',  label: 'Government-Issued ID',                   required: true  },
+  { key: 'INCOME_PROOF',   label: 'Income Proof (W-2, pay stubs, tax return)', required: true  },
+  { key: 'BANK_STATEMENT', label: 'Bank Statements (last 3 months)',         required: true  },
+  { key: 'CREDIT_REPORT',  label: 'Credit Report',                           required: false },
 ];
 
 const EMPLOYMENT_OPTIONS = [
-  { value: 'FULL_TIME', label: 'Full-time' },
-  { value: 'PART_TIME', label: 'Part-time' },
+  { value: 'FULL_TIME',     label: 'Full-time'    },
+  { value: 'PART_TIME',    label: 'Part-time'    },
   { value: 'SELF_EMPLOYED', label: 'Self-employed' },
-  { value: 'CONTRACT', label: 'Contract' },
-  { value: 'UNEMPLOYED', label: 'Unemployed' },
+  { value: 'CONTRACT',     label: 'Contract'     },
+  { value: 'UNEMPLOYED',   label: 'Unemployed'   },
 ];
 
 const LOAN_PURPOSES = [
-  'Home Improvement', 'Debt Consolidation', 'Auto Loan', 'Business Investment',
-  'Education', 'Medical Expenses', 'Personal Loan', 'Other',
+  'Home Improvement','Debt Consolidation','Auto Loan','Business Investment',
+  'Education','Medical Expenses','Personal Loan','Other',
 ];
 
+/* ── Step color config ─────────────────────────────────────────── */
+const stepConfig: Record<string, { bg: string; accent: string; light: string; border: string }> = {
+  personal:   { bg: 'linear-gradient(135deg,#ecfeff 0%,#cffafe 100%)', accent: '#0891b2', light: '#e0f7fa', border: '#a5f3fc' },
+  employment: { bg: 'linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%)', accent: '#7c3aed', light: '#ede9fe', border: '#c4b5fd' },
+  loan:       { bg: 'linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%)', accent: '#d97706', light: '#fef3c7', border: '#fde68a' },
+  documents:  { bg: 'linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%)', accent: '#059669', light: '#d1fae5', border: '#6ee7b7' },
+};
+
+/* ── Shared helpers ────────────────────────────────────────────── */
+function getInput(accent: string): React.CSSProperties {
+  return {
+    width: '100%', padding: '11px 14px',
+    border: `1.5px solid #e2e8f0`,
+    borderRadius: '8px', fontSize: '14px',
+    color: '#1e293b', background: '#fff',
+    outline: 'none', transition: 'all 0.18s',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+  };
+}
+
+function PrimaryBtn({ children, onClick, disabled }: { children: React.ReactNode; onClick?: () => void; disabled?: boolean }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button
+      onClick={onClick} disabled={disabled}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: '8px',
+        padding: '12px 28px', borderRadius: '8px', border: 'none',
+        fontWeight: 700, fontSize: '14px',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        background: disabled
+          ? '#cbd5e1'
+          : hover
+          ? 'linear-gradient(135deg,#4f46e5,#7c3aed)'
+          : 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+        color: '#fff',
+        boxShadow: disabled ? 'none' : hover
+          ? '0 6px 20px rgba(99,102,241,0.5)'
+          : '0 4px 14px rgba(99,102,241,0.35)',
+        transition: 'all 0.18s', opacity: disabled ? 0.65 : 1,
+      }}
+    >{children}</button>
+  );
+}
+
+function SecondaryBtn({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: '8px',
+      padding: '12px 24px', borderRadius: '8px',
+      border: '1.5px solid #e2e8f0', fontWeight: 600, fontSize: '14px',
+      cursor: 'pointer', background: '#fff', color: '#64748b',
+      transition: 'all 0.18s',
+    }}>{children}</button>
+  );
+}
+
+/* ── Field wrapper ─────────────────────────────────────────────── */
+function Field({ label, required, children, span }: { label: string; required?: boolean; children: React.ReactNode; span?: boolean }) {
+  return (
+    <div style={span ? { gridColumn: '1 / -1' } : {}}>
+      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+        {label}{required && <span style={{ color: '#ef4444', marginLeft: '3px' }}>*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+/* ── Section header ────────────────────────────────────────────── */
+function SectionHeader({ icon, title, subtitle, color }: { icon: string; title: string; subtitle?: string; color: string }) {
+  return (
+    <div style={{ marginBottom: '28px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          width: '48px', height: '48px', borderRadius: '14px',
+          background: `linear-gradient(135deg,${color}cc,${color})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '22px', boxShadow: `0 4px 14px ${color}55`,
+        }}>{icon}</div>
+        <div>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', margin: 0 }}>{title}</h2>
+          {subtitle && <p style={{ fontSize: '13px', color: '#94a3b8', margin: '2px 0 0' }}>{subtitle}</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MAIN COMPONENT
+═══════════════════════════════════════════════════════════════════ */
 export default function ApplicantPortal() {
-  const [step, setStep] = useState<Step>('personal');
-  const [form, setForm] = useState<Partial<ApplicationFormData>>({
-    loan_term_months: 60,
-    monthly_debt_payments: 0,
-  });
-  const [files, setFiles] = useState<Record<string, File[]>>({});
+  const [step, setStep]             = useState<Step>('personal');
+  const [form, setForm]             = useState<Partial<ApplicationFormData>>({ loan_term_months: 60, monthly_debt_payments: 0 });
+  const [files, setFiles]           = useState<Record<string, File[]>>({});
   const [submittedApp, setSubmittedApp] = useState<{ id: string; status: string } | null>(null);
   const [processing, setProcessing] = useState(false);
   const [processingResult, setProcessingResult] = useState<{
-    status: string;
-    message: string;
+    status: string; message: string;
     missingDocuments?: string[];
     recommendation?: { recommendation: string; explanation: string };
   } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError]   = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const set = (field: keyof ApplicationFormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const currentIndex = STEPS.indexOf(step);
+  const cfg = stepConfig[step] || stepConfig.personal;
 
-  // ----------------------------------------------------------------
-  // Step 1: Submit application
-  // ----------------------------------------------------------------
+  /* handlers */
   const submitApplication = async () => {
     setError(null);
     if (!form.applicant_name || !form.applicant_email || !form.loan_amount || !form.loan_purpose) {
-      setError('Please fill in all required fields.');
-      return;
+      setError('Please fill in all required fields.'); return;
     }
     try {
       setProcessing(true);
       const res = await applicationsApi.create(form as ApplicationFormData);
       setSubmittedApp({ id: res.data.application.id, status: res.data.application.status });
       setStep('documents');
-    } catch (e: unknown) {
-      setError((e as Error).message);
-    } finally {
-      setProcessing(false);
-    }
+    } catch (e: unknown) { setError((e as Error).message); }
+    finally { setProcessing(false); }
   };
 
-  // ----------------------------------------------------------------
-  // Step 2: Upload documents then trigger processing
-  // ----------------------------------------------------------------
   const uploadAndProcess = async () => {
     if (!submittedApp) return;
-    setError(null);
-    setUploading(true);
+    setError(null); setUploading(true);
     try {
-      // Upload each doc type
       for (const [docType, fileList] of Object.entries(files)) {
-        if (fileList.length > 0) {
-          await applicationsApi.uploadDocuments(submittedApp.id, fileList, docType);
-        }
+        if (fileList.length > 0) await applicationsApi.uploadDocuments(submittedApp.id, fileList, docType);
       }
-      // Trigger processing pipeline
-      setUploading(false);
-      setProcessing(true);
+      setUploading(false); setProcessing(true);
       const res = await applicationsApi.process(submittedApp.id);
       setProcessingResult(res.data as typeof processingResult);
       setStep('submitted');
-    } catch (e: unknown) {
-      setError((e as Error).message);
-    } finally {
-      setUploading(false);
-      setProcessing(false);
-    }
+    } catch (e: unknown) { setError((e as Error).message); }
+    finally { setUploading(false); setProcessing(false); }
   };
 
-  const ProgressBar = () => (
-    <div style={{ display: 'flex', gap: '8px', marginBottom: '28px' }}>
-      {STEP_LABELS.map((label, i) => (
-        <div key={i} style={{ flex: 1 }}>
-          <div
-            style={{
-              height: '4px',
-              borderRadius: '2px',
-              background: i <= currentIndex - 1 ? '#e94560' : i === currentIndex - 1 ? '#e94560' : '#e0e0e0',
-            }}
-          />
-          <div style={{ fontSize: '10px', color: '#888', marginTop: '4px', textAlign: 'center' }}>{label}</div>
-        </div>
-      ))}
-    </div>
-  );
-
-  // ----------------------------------------------------------------
-  // Render steps
-  // ----------------------------------------------------------------
-  if (step === 'submitted') {
-    const rec = processingResult?.recommendation as { recommendation?: string; explanation?: string } | undefined;
-    const missing = processingResult?.missingDocuments;
-
+  /* ── Stepper ── */
+  const Stepper = () => {
+    const activeIdx = STEPS.indexOf(step);
     return (
-      <div style={{ padding: '32px 16px' }}>
-        <div style={card}>
-          <h2 style={{ marginTop: 0, color: '#1a1a2e' }}>Application Submitted</h2>
-          <p style={{ color: '#555', fontSize: '14px' }}>Application ID: <strong>{submittedApp?.id}</strong></p>
-
-          {missing && missing.length > 0 ? (
-            <div style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-              <strong>⚠ Missing Documents</strong>
-              <p style={{ margin: '8px 0 0', fontSize: '14px' }}>
-                Processing could not proceed. Please upload the following:
-              </p>
-              <ul style={{ marginTop: '8px' }}>
-                {missing.map((d) => <li key={d}>{d}</li>)}
-              </ul>
-            </div>
-          ) : rec ? (
-            <div style={{ background: '#f0f9ff', border: '1px solid #b8d9f5', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <strong>AI Recommendation:</strong>
-                <StatusBadge status={rec.recommendation || ''} />
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '36px' }}>
+        {STEP_LABELS.map((lbl, i) => {
+          const si = i + 1;
+          const done   = si < activeIdx;
+          const active = si === activeIdx;
+          const c = STEP_COLORS[i];
+          return (
+            <React.Fragment key={i}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{
+                  width: '44px', height: '44px', borderRadius: '50%',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: done ? '18px' : '20px', fontWeight: 800,
+                  background: done
+                    ? `linear-gradient(135deg,${c.from},${c.to})`
+                    : active
+                    ? `linear-gradient(135deg,${c.from},${c.to})`
+                    : '#f1f5f9',
+                  color: done || active ? '#fff' : '#94a3b8',
+                  border: active ? `3px solid ${c.from}88` : 'none',
+                  boxShadow: active ? `0 0 0 5px ${c.from}22, 0 4px 12px ${c.from}44` : done ? `0 4px 10px ${c.from}44` : 'none',
+                  transition: 'all 0.3s',
+                }}>
+                  {done ? '✓' : STEP_ICONS[i]}
+                </div>
+                <div style={{
+                  fontSize: '11px', fontWeight: active ? 700 : 400, marginTop: '7px',
+                  color: active ? c.from : done ? c.from : '#94a3b8',
+                  whiteSpace: 'nowrap',
+                }}>{lbl}</div>
               </div>
-              <p style={{ margin: 0, fontSize: '13px', color: '#555', whiteSpace: 'pre-line' }}>
-                Your application is now awaiting review by a licensed underwriter who will make the final decision.
-              </p>
+              {i < STEP_LABELS.length - 1 && (
+                <div style={{
+                  flex: 1, height: '3px', marginTop: '-20px',
+                  background: si < activeIdx
+                    ? `linear-gradient(90deg,${STEP_COLORS[i].from},${STEP_COLORS[i+1].from})`
+                    : '#e2e8f0',
+                  borderRadius: '2px', transition: 'background 0.4s',
+                }} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
+  };
+
+  /* ── Submitted screen ── */
+  if (step === 'submitted') {
+    const rec = processingResult?.recommendation as { recommendation?: unknown } | undefined;
+    const recommendationValue = typeof rec?.recommendation === 'string' ? rec.recommendation : '';
+    const missing = processingResult?.missingDocuments;
+    return (
+      <div style={{ minHeight: 'calc(100vh - 64px)', background: 'linear-gradient(135deg,#f0fdf4,#ecfdf5,#d1fae5)', padding: '48px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#fff', borderRadius: '20px', padding: '48px', maxWidth: '560px', width: '100%', boxShadow: '0 20px 60px rgba(16,185,129,0.15)', border: '1px solid #a7f3d0', textAlign: 'center' }} className="fade-in">
+          <div style={{ width: '88px', height: '88px', borderRadius: '50%', margin: '0 auto 24px', background: missing?.length ? 'linear-gradient(135deg,#fef3c7,#fde68a)' : 'linear-gradient(135deg,#10b981,#34d399)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', boxShadow: missing?.length ? '0 0 0 10px #fef9c3' : '0 0 0 10px #d1fae5' }}>
+            {missing?.length ? '⚠️' : '🎉'}
+          </div>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+            {missing?.length ? 'Documents Needed' : 'Application Submitted!'}
+          </h2>
+          <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px' }}>
+            ID: <code style={{ background: '#f1f5f9', padding: '3px 10px', borderRadius: '6px', fontWeight: 700, color: '#6366f1', fontSize: '13px' }}>{submittedApp?.id}</code>
+          </p>
+          {missing?.length ? (
+            <div style={{ background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', border: '1px solid #fbbf24', borderRadius: '12px', padding: '20px', marginBottom: '20px', textAlign: 'left' }}>
+              <p style={{ fontWeight: 700, color: '#92400e', marginBottom: '10px' }}>⚠ Please upload these missing documents:</p>
+              {missing.map((d) => <div key={d} style={{ fontSize: '14px', color: '#78350f', padding: '4px 0' }}>• {d}</div>)}
+            </div>
+          ) : rec?.recommendation ? (
+            <div style={{ background: 'linear-gradient(135deg,#ecfdf5,#d1fae5)', border: '1px solid #6ee7b7', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
+                <span style={{ fontWeight: 600, color: '#065f46' }}>AI Recommendation:</span>
+                <StatusBadge status={recommendationValue} size="lg" />
+              </div>
+              <p style={{ color: '#047857', fontSize: '13px', margin: 0 }}>Awaiting final review by a licensed underwriter.</p>
             </div>
           ) : (
-            <div style={{ background: '#d4edda', border: '1px solid #c3e6cb', borderRadius: '8px', padding: '16px' }}>
-              <strong>✓ Application received and being processed.</strong>
+            <div style={{ background: 'linear-gradient(135deg,#ecfdf5,#d1fae5)', border: '1px solid #6ee7b7', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+              <p style={{ color: '#065f46', fontWeight: 600, margin: 0 }}>✓ Application received and being processed.</p>
             </div>
           )}
-
-          <p style={{ fontSize: '13px', color: '#888' }}>
-            You will be notified once an underwriter has reviewed your application.
-          </p>
-          <button style={btn('primary')} onClick={() => { setStep('personal'); setForm({ loan_term_months: 60, monthly_debt_payments: 0 }); setFiles({}); setSubmittedApp(null); setProcessingResult(null); }}>
-            Submit Another Application
+          <button onClick={() => { setStep('personal'); setForm({ loan_term_months: 60, monthly_debt_payments: 0 }); setFiles({}); setSubmittedApp(null); setProcessingResult(null); }}
+            style={{ padding: '13px 32px', background: 'linear-gradient(135deg,#10b981,#059669)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(16,185,129,0.4)' }}>
+            ＋ Submit Another Application
           </button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div style={{ padding: '32px 16px' }}>
-      <div style={card}>
-        <h1 style={{ marginTop: 0, fontSize: '24px', color: '#1a1a2e' }}>Loan Application</h1>
-        <ProgressBar />
+  /* ── Main form ── */
+  const inp = getInput(cfg.accent);
 
+  return (
+    <div style={{ minHeight: 'calc(100vh - 64px)', background: cfg.bg, padding: '40px 16px', transition: 'background 0.4s' }}>
+      {/* Page-level hero strip */}
+      <div style={{ maxWidth: '720px', margin: '0 auto 24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '30px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+            Loan Application
+          </h1>
+          <p style={{ color: '#64748b', fontSize: '14px', marginTop: '4px' }}>
+            Complete all steps to submit your application for review.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ background: '#fff', borderRadius: '20px', padding: '36px', maxWidth: '720px', margin: '0 auto', boxShadow: '0 8px 32px rgba(0,0,0,0.1)', border: `1px solid ${cfg.border}` }} className="fade-in">
+        <Stepper />
+
+        {/* Error */}
         {error && (
-          <div style={{ background: '#f8d7da', border: '1px solid #f5c6cb', borderRadius: '6px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: '#721c24' }}>
-            {error}
+          <div style={{ background: 'linear-gradient(135deg,#fee2e2,#fecaca)', border: '1px solid #fca5a5', borderRadius: '10px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#7f1d1d', display: 'flex', gap: '8px' }}>
+            ⚠ {error}
           </div>
         )}
 
-        {/* ---- Step: Personal Info ---- */}
+        {/* ── Personal ── */}
         {step === 'personal' && (
-          <div>
-            <h2 style={{ fontSize: '18px', marginTop: 0 }}>Personal Information</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={label}>Full Name <span style={{ color: '#e74c3c' }}>*</span></label>
-                <input style={input} value={form.applicant_name || ''} onChange={(e) => set('applicant_name', e.target.value)} placeholder="As it appears on your ID" />
-              </div>
-              <div>
-                <label style={label}>Email <span style={{ color: '#e74c3c' }}>*</span></label>
-                <input style={input} type="email" value={form.applicant_email || ''} onChange={(e) => set('applicant_email', e.target.value)} placeholder="you@example.com" />
-              </div>
-              <div>
-                <label style={label}>Phone</label>
-                <input style={input} value={form.applicant_phone || ''} onChange={(e) => set('applicant_phone', e.target.value)} placeholder="555-000-0000" />
-              </div>
-              <div>
-                <label style={label}>Date of Birth</label>
-                <input style={input} type="date" value={form.date_of_birth || ''} onChange={(e) => set('date_of_birth', e.target.value)} />
-              </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={label}>Address</label>
-                <input style={input} value={form.address || ''} onChange={(e) => set('address', e.target.value)} placeholder="Street address" />
-              </div>
-              <div>
-                <label style={label}>City</label>
-                <input style={input} value={form.city || ''} onChange={(e) => set('city', e.target.value)} />
-              </div>
-              <div>
-                <label style={label}>State</label>
-                <input style={input} value={form.state || ''} onChange={(e) => set('state', e.target.value)} placeholder="IL" />
-              </div>
-              <div>
-                <label style={label}>ZIP Code</label>
-                <input style={input} value={form.zip_code || ''} onChange={(e) => set('zip_code', e.target.value)} />
-              </div>
+          <div className="fade-in">
+            <SectionHeader icon="👤" title="Personal Information" subtitle="As it appears on your government-issued ID" color="#06b6d4" />
+            <div style={{ background: 'linear-gradient(135deg,#ecfeff,#e0f2fe)', border: '1px solid #a5f3fc', borderRadius: '14px', padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <Field label="Full Name" required span><input style={inp} value={form.applicant_name || ''} onChange={(e) => set('applicant_name', e.target.value)} placeholder="As it appears on your ID" /></Field>
+              <Field label="Email" required><input style={inp} type="email" value={form.applicant_email || ''} onChange={(e) => set('applicant_email', e.target.value)} placeholder="you@example.com" /></Field>
+              <Field label="Phone"><input style={inp} value={form.applicant_phone || ''} onChange={(e) => set('applicant_phone', e.target.value)} placeholder="555-000-0000" /></Field>
+              <Field label="Date of Birth"><input style={inp} type="date" value={form.date_of_birth || ''} onChange={(e) => set('date_of_birth', e.target.value)} /></Field>
+              <Field label="Street Address" span><input style={inp} value={form.address || ''} onChange={(e) => set('address', e.target.value)} placeholder="123 Main Street" /></Field>
+              <Field label="City"><input style={inp} value={form.city || ''} onChange={(e) => set('city', e.target.value)} /></Field>
+              <Field label="State"><input style={inp} value={form.state || ''} onChange={(e) => set('state', e.target.value)} placeholder="IL" /></Field>
+              <Field label="ZIP Code"><input style={inp} value={form.zip_code || ''} onChange={(e) => set('zip_code', e.target.value)} /></Field>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-              <button style={btn('primary')} onClick={() => setStep('employment')}>Next →</button>
+              <PrimaryBtn onClick={() => setStep('employment')}>Next →</PrimaryBtn>
             </div>
           </div>
         )}
 
-        {/* ---- Step: Employment & Income ---- */}
+        {/* ── Employment ── */}
         {step === 'employment' && (
-          <div>
-            <h2 style={{ fontSize: '18px', marginTop: 0 }}>Employment & Income</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={label}>Employment Status</label>
-                <select style={input} value={form.employment_status || ''} onChange={(e) => set('employment_status', e.target.value)}>
+          <div className="fade-in">
+            <SectionHeader icon="💼" title="Employment & Income" subtitle="Help us understand your financial situation" color="#8b5cf6" />
+            <div style={{ background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)', border: '1px solid #c4b5fd', borderRadius: '14px', padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <Field label="Employment Status">
+                <select style={inp} value={form.employment_status || ''} onChange={(e) => set('employment_status', e.target.value)}>
                   <option value="">Select...</option>
                   {EMPLOYMENT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
-              </div>
-              <div>
-                <label style={label}>Employer Name</label>
-                <input style={input} value={form.employer_name || ''} onChange={(e) => set('employer_name', e.target.value)} placeholder="Company name" />
-              </div>
-              <div>
-                <label style={label}>Annual Income ($)</label>
-                <input style={input} type="number" min={0} value={form.annual_income || ''} onChange={(e) => set('annual_income', parseFloat(e.target.value))} placeholder="60000" />
-              </div>
-              <div>
-                <label style={label}>Monthly Debt Payments ($)</label>
-                <input style={input} type="number" min={0} value={form.monthly_debt_payments || ''} onChange={(e) => set('monthly_debt_payments', parseFloat(e.target.value))} placeholder="500" />
-              </div>
-              <div>
-                <label style={label}>Years Employed</label>
-                <input style={input} type="number" min={0} step={0.5} value={form.years_employed || ''} onChange={(e) => set('years_employed', parseFloat(e.target.value))} placeholder="3.5" />
-              </div>
-              <div>
-                <label style={label}>Credit Score (optional)</label>
-                <input style={input} type="number" min={300} max={850} value={form.credit_score || ''} onChange={(e) => set('credit_score', parseInt(e.target.value))} placeholder="680" />
-              </div>
+              </Field>
+              <Field label="Employer Name"><input style={inp} value={form.employer_name || ''} onChange={(e) => set('employer_name', e.target.value)} placeholder="Company name" /></Field>
+              <Field label="Annual Income ($)"><input style={inp} type="number" min={0} value={form.annual_income || ''} onChange={(e) => set('annual_income', parseFloat(e.target.value))} placeholder="60,000" /></Field>
+              <Field label="Monthly Debt Payments ($)"><input style={inp} type="number" min={0} value={form.monthly_debt_payments || ''} onChange={(e) => set('monthly_debt_payments', parseFloat(e.target.value))} placeholder="500" /></Field>
+              <Field label="Years Employed"><input style={inp} type="number" min={0} step={0.5} value={form.years_employed || ''} onChange={(e) => set('years_employed', parseFloat(e.target.value))} placeholder="3.5" /></Field>
+              <Field label="Credit Score (optional)"><input style={inp} type="number" min={300} max={850} value={form.credit_score || ''} onChange={(e) => set('credit_score', parseInt(e.target.value))} placeholder="680" /></Field>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
-              <button style={btn('secondary')} onClick={() => setStep('personal')}>← Back</button>
-              <button style={btn('primary')} onClick={() => setStep('loan')}>Next →</button>
+              <SecondaryBtn onClick={() => setStep('personal')}>← Back</SecondaryBtn>
+              <PrimaryBtn onClick={() => setStep('loan')}>Next →</PrimaryBtn>
             </div>
           </div>
         )}
 
-        {/* ---- Step: Loan Details ---- */}
+        {/* ── Loan ── */}
         {step === 'loan' && (
-          <div>
-            <h2 style={{ fontSize: '18px', marginTop: 0 }}>Loan Details</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={label}>Loan Amount ($) <span style={{ color: '#e74c3c' }}>*</span></label>
-                <input style={input} type="number" min={1000} value={form.loan_amount || ''} onChange={(e) => set('loan_amount', parseFloat(e.target.value))} placeholder="25000" />
-              </div>
-              <div>
-                <label style={label}>Loan Term (months) <span style={{ color: '#e74c3c' }}>*</span></label>
-                <select style={input} value={form.loan_term_months || 60} onChange={(e) => set('loan_term_months', parseInt(e.target.value))}>
-                  {[12, 24, 36, 48, 60, 72, 84, 120].map((m) => <option key={m} value={m}>{m} months ({(m / 12).toFixed(0)} yr{m / 12 !== 1 ? 's' : ''})</option>)}
+          <div className="fade-in">
+            <SectionHeader icon="💰" title="Loan Details" subtitle="Tell us about your loan request" color="#f59e0b" />
+            <div style={{ background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', border: '1px solid #fde68a', borderRadius: '14px', padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <Field label="Loan Amount ($)" required><input style={inp} type="number" min={1000} value={form.loan_amount || ''} onChange={(e) => set('loan_amount', parseFloat(e.target.value))} placeholder="25,000" /></Field>
+              <Field label="Loan Term" required>
+                <select style={inp} value={form.loan_term_months || 60} onChange={(e) => set('loan_term_months', parseInt(e.target.value))}>
+                  {[12,24,36,48,60,72,84,120].map((m) => <option key={m} value={m}>{m} months ({(m/12).toFixed(0)} yr{m/12!==1?'s':''})</option>)}
                 </select>
-              </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={label}>Loan Purpose <span style={{ color: '#e74c3c' }}>*</span></label>
-                <select style={input} value={form.loan_purpose || ''} onChange={(e) => set('loan_purpose', e.target.value)}>
+              </Field>
+              <Field label="Loan Purpose" required span>
+                <select style={inp} value={form.loan_purpose || ''} onChange={(e) => set('loan_purpose', e.target.value)}>
                   <option value="">Select purpose...</option>
                   {LOAN_PURPOSES.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
-              </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={label}>Additional Notes</label>
-                <textarea
-                  style={{ ...input, minHeight: '80px', resize: 'vertical' }}
-                  value={form.notes || ''}
-                  onChange={(e) => set('notes', e.target.value)}
-                  placeholder="Any additional information relevant to your application"
-                />
-              </div>
+              </Field>
+              <Field label="Additional Notes" span>
+                <textarea style={{ ...inp, minHeight: '90px', resize: 'vertical' }} value={form.notes || ''} onChange={(e) => set('notes', e.target.value)} placeholder="Any additional information..." />
+              </Field>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px' }}>
-              <button style={btn('secondary')} onClick={() => setStep('employment')}>← Back</button>
-              <button
-                style={{ ...btn('primary'), opacity: processing ? 0.7 : 1 }}
-                onClick={submitApplication}
-                disabled={processing}
-              >
-                {processing ? 'Submitting...' : 'Submit Application →'}
-              </button>
+              <SecondaryBtn onClick={() => setStep('employment')}>← Back</SecondaryBtn>
+              <PrimaryBtn onClick={submitApplication} disabled={processing}>{processing ? '⏳ Submitting...' : 'Submit Application →'}</PrimaryBtn>
             </div>
           </div>
         )}
 
-        {/* ---- Step: Documents ---- */}
+        {/* ── Documents ── */}
         {step === 'documents' && (
-          <div>
-            <h2 style={{ fontSize: '18px', marginTop: 0 }}>Upload Documents</h2>
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px' }}>
-              Application ID: <strong>{submittedApp?.id}</strong>. Please upload the required documents to proceed.
-            </p>
-            {DOC_TYPES.map((dt) => (
-              <DocumentUpload
-                key={dt.key}
-                label={dt.label}
-                required={dt.required}
-                onFilesSelected={(f) => setFiles((prev) => ({ ...prev, [dt.key]: f }))}
-                uploadedCount={files[dt.key]?.length || 0}
-                disabled={uploading || processing}
-              />
-            ))}
-            {error && (
-              <div style={{ background: '#f8d7da', borderRadius: '6px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: '#721c24' }}>
-                {error}
+          <div className="fade-in">
+            <SectionHeader icon="📄" title="Upload Documents" subtitle={`Application ${submittedApp?.id}`} color="#10b981" />
+            <div style={{ background: 'linear-gradient(135deg,#ecfdf5,#d1fae5)', border: '1px solid #6ee7b7', borderRadius: '14px', padding: '20px', marginBottom: '8px' }}>
+              <div style={{ fontSize: '13px', color: '#065f46', fontWeight: 500, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                ℹ Upload all required documents, then click Process.
               </div>
-            )}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-              <button
-                style={{ ...btn('primary'), opacity: uploading || processing ? 0.7 : 1 }}
-                onClick={uploadAndProcess}
-                disabled={uploading || processing}
-              >
-                {uploading ? 'Uploading...' : processing ? 'Processing...' : 'Submit Documents & Process →'}
-              </button>
+              {DOC_TYPES.map((dt) => (
+                <DocumentUpload key={dt.key} label={dt.label} required={dt.required}
+                  onFilesSelected={(f) => setFiles((prev) => ({ ...prev, [dt.key]: f }))}
+                  uploadedCount={files[dt.key]?.length || 0} disabled={uploading || processing} />
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+              <PrimaryBtn onClick={uploadAndProcess} disabled={uploading || processing}>
+                {uploading ? '⏫ Uploading...' : processing ? '⚙ Processing...' : '🚀 Submit & Process →'}
+              </PrimaryBtn>
             </div>
           </div>
         )}
