@@ -3,10 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { config } from './config';
-import { testConnection, runRawSql, DB_FILE } from './db/client';
+import { testConnection } from './db/client';
+import { runMigration } from './db/migrate';
 import { logger } from './utils/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 
@@ -69,16 +68,8 @@ async function start(): Promise<void> {
     process.exit(1);
   }
 
-  // Auto-migrate on every boot — CREATE TABLE IF NOT EXISTS makes this safe to repeat
-  try {
-    const schemaPath = join(__dirname, 'db', 'schema.sql');
-    const sql = readFileSync(schemaPath, 'utf-8');
-    runRawSql(sql);
-    logger.info('Database schema applied', { db: DB_FILE });
-  } catch (err) {
-    logger.error('Migration failed', { error: (err as Error).message });
-    process.exit(1);
-  }
+  // Auto-migrate on every boot — all statements use IF NOT EXISTS, safe to repeat
+  await runMigration();
 
   app.listen(config.port, () => {
     logger.info(`Loan Processing Agent backend running on port ${config.port}`, {
