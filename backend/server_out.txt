@@ -1,0 +1,35 @@
+[32minfo[39m: SQLite database opened {"path":"C:\\Users\\Medha Trust\\Desktop\\Project\\backend\\src\\db\\loan_agent.db","timestamp":"2026-07-15T16:05:48.715Z"}
+[32minfo[39m: SQLite ready {"path":"C:\\Users\\Medha Trust\\Desktop\\Project\\backend\\src\\db\\loan_agent.db","timestamp":"2026-07-15T16:05:48.723Z"}
+[32minfo[39m: Loan Processing Agent backend running on port 4000 {"env":"development","port":4000,"timestamp":"2026-07-15T16:05:48.730Z"}
+[32mhttp[39m: [0mGET /health [32m200[0m 9.463 ms - 72[0m {"timestamp":"2026-07-15T16:30:29.459Z"}
+[32mhttp[39m: [0mGET /api/v1/applications?pageSize=5 [32m200[0m 6.590 ms - 3781[0m {"timestamp":"2026-07-15T16:30:48.646Z"}
+[32mhttp[39m: [0mGET /api/v1/policy/versions/active [32m200[0m 5.128 ms - 1315[0m {"timestamp":"2026-07-15T16:30:48.993Z"}
+[32minfo[39m: Audit event logged {"actor":"::1","applicationId":"16e8693a-8be4-4a9e-b70b-8e1be144b222","eventType":"APPLICATION_SUBMITTED","timestamp":"2026-07-15T16:30:49.063Z"}
+[32minfo[39m: Application created {"applicationId":"16e8693a-8be4-4a9e-b70b-8e1be144b222","timestamp":"2026-07-15T16:30:49.064Z"}
+[32mhttp[39m: [0mPOST /api/v1/applications [32m201[0m 24.248 ms - 634[0m {"timestamp":"2026-07-15T16:30:49.066Z"}
+[32minfo[39m: Processing application {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","timestamp":"2026-07-15T16:30:49.118Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"PROCESSING_STARTED","timestamp":"2026-07-15T16:30:49.122Z"}
+[32minfo[39m: Document validation starting {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","timestamp":"2026-07-15T16:30:49.124Z"}
+[32minfo[39m: Extracting data from document {"documentId":"afd70164-48fa-4687-81fb-7c3cb4df5f41","documentType":"GOVERNMENT_ID","timestamp":"2026-07-15T16:30:49.125Z"}
+[32minfo[39m: Extracting data from document {"documentId":"ad2c0bb0-6a30-42f8-a348-9011234a06ba","documentType":"INCOME_PROOF","timestamp":"2026-07-15T16:30:49.126Z"}
+[32minfo[39m: Extracting data from document {"documentId":"740e2272-31a4-4f4e-aa48-1d2d562111be","documentType":"BANK_STATEMENT","timestamp":"2026-07-15T16:30:49.127Z"}
+[32minfo[39m: Validation complete {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","inconsistencies":0,"timestamp":"2026-07-15T16:30:49.127Z","validationPassed":true}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"DOCUMENT_VALIDATION_COMPLETE","timestamp":"2026-07-15T16:30:49.132Z"}
+[32minfo[39m: Scoring application {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","timestamp":"2026-07-15T16:30:49.135Z"}
+[32minfo[39m: Scored {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","overall":96.4,"timestamp":"2026-07-15T16:30:49.141Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"SCORING_COMPLETE","timestamp":"2026-07-15T16:30:49.144Z"}
+[32minfo[39m: Recommendation saved {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","confidenceLevel":"HIGH","recommendation":"APPROVE","timestamp":"2026-07-15T16:30:49.147Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"RECOMMENDATION_GENERATED","timestamp":"2026-07-15T16:30:49.149Z"}
+[32minfo[39m: Fairness check starting {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","timestamp":"2026-07-15T16:30:49.152Z"}
+[32minfo[39m: Fairness check complete {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","passed":true,"timestamp":"2026-07-15T16:30:49.154Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"FAIRNESS_CHECK_COMPLETE","timestamp":"2026-07-15T16:30:49.156Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","eventType":"AWAITING_UNDERWRITER_DECISION","timestamp":"2026-07-15T16:30:49.159Z"}
+[32minfo[39m: Processing complete {"applicationId":"d1df4fec-7f82-42de-a22c-ab01a08b7033","overallScore":96.4,"recommendation":"APPROVE","timestamp":"2026-07-15T16:30:49.160Z"}
+[32mhttp[39m: [0mPOST /api/v1/applications/d1df4fec-7f82-42de-a22c-ab01a08b7033/process [32m200[0m 45.841 ms - 3326[0m {"timestamp":"2026-07-15T16:30:49.162Z"}
+[32minfo[39m: Processing application {"applicationId":"b279a37a-9d3d-4c3b-a8a6-593483364752","timestamp":"2026-07-15T16:30:49.188Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"b279a37a-9d3d-4c3b-a8a6-593483364752","eventType":"PROCESSING_STARTED","timestamp":"2026-07-15T16:30:49.193Z"}
+[32minfo[39m: Document validation starting {"applicationId":"b279a37a-9d3d-4c3b-a8a6-593483364752","timestamp":"2026-07-15T16:30:49.194Z"}
+[32minfo[39m: Documents incomplete {"applicationId":"b279a37a-9d3d-4c3b-a8a6-593483364752","missingDocuments":["INCOME_PROOF","BANK_STATEMENT"],"timestamp":"2026-07-15T16:30:49.195Z"}
+[32minfo[39m: Audit event logged {"actor":"SYSTEM","applicationId":"b279a37a-9d3d-4c3b-a8a6-593483364752","eventType":"DOCUMENT_VALIDATION_COMPLETE","timestamp":"2026-07-15T16:30:49.198Z"}
+[32mhttp[39m: [0mPOST /api/v1/applications/b279a37a-9d3d-4c3b-a8a6-593483364752/process [32m200[0m 13.204 ms - 712[0m {"timestamp":"2026-07-15T16:30:49.201Z"}
+[32mhttp[39m: [0mGET /api/v1/audit [32m200[0m 2.448 ms - 2363[0m {"timestamp":"2026-07-15T16:30:49.373Z"}
