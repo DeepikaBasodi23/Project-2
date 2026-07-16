@@ -520,19 +520,22 @@ export default function UnderwriterDashboard() {
 
                 {/* Underwriter info */}
                 <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid #c7d2fe', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  {[
-                    ['Underwriter ID', underwriterId, setUnderwriterId],
-                    ['Underwriter Name', underwriterName, setUnderwriterName],
-                  ].map(([lbl, val, setter]) => (
-                    <div key={String(lbl)}>
-                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6366f1', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{lbl}</label>
-                      <input
-                        value={String(val)}
-                        onChange={(e) => (setter as (v: string) => void)(e.target.value)}
-                        style={{ ...inputStyle, background: '#fff', border: '1.5px solid #a5b4fc' }}
-                      />
-                    </div>
-                  ))}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6366f1', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter ID</label>
+                    <input
+                      value={underwriterId}
+                      onChange={(e) => setUnderwriterId(e.target.value)}
+                      style={{ ...inputStyle, background: '#fff', border: '1.5px solid #a5b4fc' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#6366f1', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Underwriter Name</label>
+                    <input
+                      value={underwriterName}
+                      onChange={(e) => setUnderwriterName(e.target.value)}
+                      style={{ ...inputStyle, background: '#fff', border: '1.5px solid #a5b4fc' }}
+                    />
+                  </div>
                 </div>
 
                 {/* Decision buttons */}
